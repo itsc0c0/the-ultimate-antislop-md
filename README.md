@@ -1,4 +1,4 @@
-# The Ultimate Antislop MD
+# TUAMD
 lets prevent the AI making slops together
 
 # how to contribute
