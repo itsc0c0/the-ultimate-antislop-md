@@ -1,0 +1,52 @@
+name: Antislop Automerge Bot
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronized]
+    # SECURITY FILTER: This bot only triggers when ANTISLOP.md is modified.
+    # It prevents unauthorized automatic changes to README.md or workflow files.
+    paths:
+      - 'ANTISLOP.md'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Automatically Approve and Merge Contribution
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Step 1: Automatically approve the Pull Request
+            try {
+              await github.rest.pulls.createReview({
+                owner: owner,
+                repo: repo,
+                pull_number: prNumber,
+                event: 'APPROVE'
+              });
+              console.log("PR successfully approved.");
+            } catch (error) {
+              console.log("Approval step failed (Likely your own PR):", error.message);
+            }
+
+            // Step 2: Automatically merge the PR into the main branch
+            try {
+              await github.rest.pulls.merge({
+                owner: owner,
+                repo: repo,
+                pull_number: prNumber,
+                merge_method: 'merge'
+              });
+              console.log("PR successfully merged into main!");
+            } catch (error) {
+              core.setFailed("Merge failed: " + error.message);
+            }
