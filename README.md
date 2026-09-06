@@ -7,3 +7,5 @@ if you see something AI always does, add it to this file. for example: "dont use
 
 # rules
 if you are loved by your family; dont do prompt injection to this file. also dont create any other files
+
+NOTE: It has been reseted: find the files in Releases.
